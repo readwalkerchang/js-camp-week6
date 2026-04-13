@@ -27,6 +27,14 @@ async function getProducts() {
 	// 1. 使用 fetch() 發送 GET 請求
 	// 2. 使用 response.json() 解析回應
 	// 3. 回傳 data.products
+	const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`;
+	const response = await fetch(url, {
+		headers:{
+			authorization: ADMIN_TOKEN
+		}
+	});
+    const data = await response.json();
+	return data.products;
 }
 
 /**
@@ -34,7 +42,15 @@ async function getProducts() {
  * @returns {Promise<Object>} - 回傳 { carts: [...], total: 數字, finalTotal: 數字 }
  */
 async function getCart() {
-	// 請實作此函式
+	const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+	const response = await fetch(url,{
+		headers:{
+			authorization: ADMIN_TOKEN
+		}
+	})
+	const data = await response.json();
+	return data;
+
 }
 
 /**
@@ -48,6 +64,23 @@ async function getProductsSafe() {
 	// 2. 檢查 response.ok 判斷是否成功
 	// 3. 成功回傳 { success: true, data: [...] }
 	// 4. 失敗回傳 { success: false, error: '錯誤訊息' }
+	try {
+		const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`;
+		response = await fetch(url,{
+			headers:{
+				authorization: ADMIN_TOKEN
+			} 
+		})
+		if(!response.ok){
+			return { success: false, error: data.message }
+		};
+		const data = await response.json();
+		return { success:data.status, data: data.products};
+		
+
+	} catch (exception) {
+		return { success: false, error: exception.message };
+    }
 }
 
 // ========================================
@@ -61,13 +94,33 @@ async function getProductsSafe() {
  * @returns {Promise<Object>} - 回傳更新後的購物車資料
  */
 async function addToCart(productId, quantity) {
-	// 請實作此函式
-	// 提示：
-	// 1. 發送 POST 請求
-	// 2. body 格式：{ data: { productId: "xxx", quantity: 1 } }
-	// 3. 記得設定 headers: { 'Content-Type': 'application/json' }
-	// 4. body 要用 JSON.stringify() 轉換
+// 請實作此函式
+// 提示：
+// 1. 發送 POST 請求
+// 2. body 格式：{ data: { productId: "xxx", quantity: 1 } }
+// 3. 記得設定 headers: { 'Content-Type': 'application/json' }
+// 4. body 要用 JSON.stringify() 轉換
+try {
+		const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+		const requstBody = { data: { productId, quantity } }
+		const response = await fetch(url, {
+				method:'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(requstBody)
+			});
+		const data = await response.json();
+		if(!response.ok){
+			return {success: false, error: data.message};
+		};
+		return{success: true, carts: data.carts}
+	
+
+	}
+	catch(exception) {
+		return { success: false, error: exception.message };
+	}
 }
+
 
 /**
  * 2. 編輯購物車商品數量
@@ -80,7 +133,25 @@ async function updateCartItem(cartId, quantity) {
 	// 提示：
 	// 1. 發送 PATCH 請求
 	// 2. body 格式：{ data: { id: "購物車ID", quantity: 數量 } }
+	const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+	requstBody = { data: { id: cartId, quantity } };
+	try{
+		response = await fetch(url,{
+			method:'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body:JSON.stringify(requstBody)
+		})
+		data = await response.json()
+		if(!response.ok){
+			return { success: false, error: data.message };
+		}
+		return { success: true, carts: data.carts};
+
+	}catch(exception){
+		return { success: false, error: exception.message };
+	}
 }
+
 
 /**
  * 3. 刪除購物車特定商品
