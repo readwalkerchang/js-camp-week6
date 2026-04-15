@@ -159,8 +159,22 @@ async function updateCartItem(cartId, quantity) {
  * @returns {Promise<Object>} - 回傳更新後的購物車資料
  */
 async function removeCartItem(cartId) {
-	// 請實作此函式
 	// 提示：發送 DELETE 請求到 /carts/{id}
+	try{
+		const id = cartId;
+		const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts/${id}`;
+		const response = await fetch(url,{
+			method:'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+		});
+		const data = await response.json();
+		if(!response.ok){
+			return { success: false, error:data.message};
+		}
+		return { success: true, carts: data.carts};
+	}catch(exception){
+		return { success: false, error:exception.message};
+	}
 }
 
 /**
@@ -170,6 +184,21 @@ async function removeCartItem(cartId) {
 async function clearCart() {
 	// 請實作此函式
 	// 提示：發送 DELETE 請求到 /carts
+	try{
+		const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+		const response = await fetch(url,{
+			method:'DELETE',
+			headers:{'Content-Type': 'application/json'}
+		})
+		const data = await response.json();
+		if(!response.ok){
+			return {status: false, carts: data.message};
+		}
+		return {status: true, carts: data.carts};
+
+	}catch(exception){
+		return {status: false, carts: exception.message};
+	}
 }
 
 // ========================================
