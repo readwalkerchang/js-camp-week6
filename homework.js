@@ -77,7 +77,6 @@ async function getProductsSafe() {
 		const data = await response.json();
 		return { success:data.status, data: data.products};
 		
-
 	} catch (exception) {
 		return { success: false, error: exception.message };
     }
