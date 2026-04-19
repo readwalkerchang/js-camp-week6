@@ -29,13 +29,20 @@ async function getProducts() {
 	// 2. 使用 response.json() 解析回應
 	// 3. 回傳 data.products
 	const url = `${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`;
-	const response = await fetch(url, {
-		headers:{
-			authorization: ADMIN_TOKEN
-		}
+	
+	//練習使用自己寫的helper
+	const result = await requestHelper({
+		url,
+		headers: {
+			authorization: ADMIN_TOKEN,
+		},
 	});
-    const data = await response.json();
-	return data.products;
+
+	if (result.success === false) {
+		throw new Error(result.error);
+	}
+
+	return result.products;
 }
 
 /**
