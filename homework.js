@@ -6,6 +6,7 @@
 
 // 載入環境變數
 require("dotenv").config({ path: ".env" });
+const { requestHelper } = require("./helper");
 
 // API 設定（從 .env 讀取）
 const API_PATH = process.env.API_PATH;
